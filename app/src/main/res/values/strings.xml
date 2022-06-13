@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Ceiba</string>
+    <string name="search_hint">Buscar usuario..</string>
+    <string name="search_message_error">Ocurrrio un error, vuelve a intertarlo.</string>
+    <string name="btn_retry">Volver a intentar</string>
+    <string name="btn_view_post">Ver Publicaciones</string>
+    <string name="message_empty_list">List is empty</string>
+</resources>
