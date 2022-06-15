@@ -50,9 +50,8 @@ class GetPostByUserIdUCTest {
     }
 
     @Test
-    fun giveFailureWhenInvokeThenFlowResultFailuere() = runBlocking {
+    fun giveFailureWhenInvokeThenFlowResultFailure() = runBlocking {
         // Give
-        val post: Post = mockk()
         every { postByUserIdRepository.getPostByUserId(1) } answers {
             flowOf(
                 Result.failure(UnknownError)

@@ -20,7 +20,7 @@ import androidx.navigation.navigation
 import com.test.ceiba.ui.main.navigation.Route.USER_ID
 import com.test.ceiba.ui.main.post.intent.PostEvent
 import com.test.ceiba.ui.main.post.intent.PostEvent.OnBackPressed
-import com.test.ceiba.ui.main.post.screen.postScreen
+import com.test.ceiba.ui.main.post.screen.PostScreen
 import com.test.ceiba.ui.main.post.viewmodel.PostViewModel
 import com.test.ceiba.ui.main.user.intent.UserEvent
 import com.test.ceiba.ui.main.user.screen.UserListScreen
@@ -73,7 +73,7 @@ fun NavGraphBuilder.mainGraph(
             }
         }
 
-        postScreen(
+        PostScreen(
             livedata = postViewModel.viewState,
             onEvent = { event ->
                 when (event) {

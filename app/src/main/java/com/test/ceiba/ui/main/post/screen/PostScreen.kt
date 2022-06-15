@@ -55,7 +55,7 @@ import com.test.ceiba.ui.theme.Typography
 import kotlinx.coroutines.launch
 
 @Composable
-fun postScreen(
+fun PostScreen(
     livedata: LiveData<PostState>,
     onEvent: (PostEvent) -> Unit
 ) {
