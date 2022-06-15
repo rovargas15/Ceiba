@@ -16,7 +16,10 @@ sonarqube {
         property "sonar.projectVersion", "$app_version"
         property "sonar.coverage.jacoco.xmlReportPaths", "app/build/jacoco/jacoco.xml"
         property "sonar.junit.reportsPath", "app/build/test-results/*/TEST-*.xml"
-        property " sonar.java.coveragePlugin", "jacoco"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.tests", "jacoco"
+        property "sonar.test.inclusions", "src/**/test/**/*"
+        property "sonar.exclusions", "src/**/test/**/*"
     }
 }
 
