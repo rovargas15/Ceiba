@@ -4,17 +4,13 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id "org.sonarqube" version "3.4.0.2513"
     id "com.hiya.jacoco-android"
 }
 
-sonarqube {
-    properties {
-        property "sonar.projectKey", "rovargas15_Ceiba"
-        property "sonar.organization", "rovargas15"
-        property "sonar.host.url", "https://sonarcloud.io"
-    }
+jacoco {
+    toolVersion = "0.8.7"
 }
+
 android {
     compileSdk 32
 
@@ -170,9 +166,10 @@ jacocoAndroidUnitTestReport {
             '**/com/test/ceiba/ui/di/*',
             '**/*Hilt*.*',
             '**/dagger/*',
+            '**/JsonAdapter/*',
             '**/hilt_aggregated_deps/*',
     ]
     csv.enabled true
-    html.enabled false
+    html.enabled true
     xml.enabled false
 }
