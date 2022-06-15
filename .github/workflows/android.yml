@@ -49,4 +49,4 @@ jobs:
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
       - name: Run Test Coverage
-        run: ./gradlew jacocoTestReport
+        run: ./gradlew jacocoTestReport sonarqube
