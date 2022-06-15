@@ -53,6 +53,9 @@ jobs:
       - name: Run Report Lint
         run: ./gradlew lint
 
+      # Run Report ktlint
+      - name: Run Report Lint
+        run: ./gradlew lint
 
   sonar:
     needs: [ build ]

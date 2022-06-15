@@ -20,7 +20,6 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
     id 'com.google.dagger.hilt.android' version '2.42' apply false
     id "org.jlleitschuh.gradle.ktlint" version "10.3.0"
-    id 'com.google.gms.google-services' version "4.3.10"
 }
 
 task clean(type: Delete) {
