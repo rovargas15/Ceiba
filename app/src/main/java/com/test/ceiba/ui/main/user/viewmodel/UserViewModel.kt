@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,7 +63,7 @@ class UserViewModel @Inject constructor(
                     _viewState.postValue(UserState.Success(users))
                 },
                 onFailure = {
-                    Timber.tag(this::class.simpleName).e(it)
+                    // Timber.tag(this::class.simpleName).e(it)
                     _viewState.postValue(UserState.Error)
                 }
             )
@@ -80,7 +79,7 @@ class UserViewModel @Inject constructor(
                     _viewState.postValue(UserState.Success(users))
                 },
                 onFailure = {
-                    Timber.tag(this::class.simpleName).e(it)
+                    // Timber.tag(this::class.simpleName).e(it)
                     _viewState.postValue(UserState.Error)
                 }
             )
