@@ -49,17 +49,17 @@ jobs:
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
   jacoco:
+    needs: [build]
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
       - name: Set Up JDK
-      uses: actions/setup-java@v1
-        with:
-          java-version: 11
+       uses: actions/setup-java@v1
+          with:
+            java-version: 11
 
-        - name: Change wrapper permissions
-          run: chmod +x ./gradlew
+       - name: Change wrapper permissions
+         run: chmod +x ./gradlew
 
       - name: Run Coverage - ${{ env.main_project_module }} module
-        run: ./gradlew jacocoDebugTestReport
+        run:  ./gradlew jacocoTestReport
