@@ -8,26 +8,6 @@ on:
     types: [ opened, synchronize, reopened ]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Java JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-
-      - name: Build Lint
-        run: ./gradlew lintDebug
-
-      - name: Upload Build Lint Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: report
-          path: app/build/reports/lint-results-debug.html
-
   test:
     needs: [ lint ]
     runs-on: ubuntu-latest
