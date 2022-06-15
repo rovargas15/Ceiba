@@ -1,34 +1,55 @@
 name: Android CI
 
+env:
+  # The name of the main module repository
+  main_project_module: app
+
 on:
   push:
-    branches: [ master ]
-
-
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
 
-      - name: Setup Java JDK
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      # Set Current Date As Env Variable
+      - name: Set current date as env variable
+        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      # Set Repository Name As Env Variable
+      - name: Set repository name as env variable
+        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+
+      - name: Set Up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 11
 
-      - name: Build Lint
-        run: ./gradlew lintDebug
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
 
-      - name: Upload Build Lint Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: report
-          path: app/build/reports/lint-results-debug.html
+      # Run Tests Build
+      - name: Run gradle tests
+        run: ./gradlew test
+
+      # Run Build Project
+      - name: Build gradle project
+        run: ./gradlew build
+
+      # Create Bundle AAB Release
+      # Noted for main module build [main_project_module]:bundleRelease
+      - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
+        run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
   test:
-    needs: [lint]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
