@@ -51,7 +51,7 @@ jobs:
 
       # Run Report Lint
       - name: Run Report Lint
-      run: ./gradlew lint
+        run: ./gradlew lint
 
 
   sonar:
@@ -84,11 +84,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonarqube --info
 
-  # Este Workflow contém um único Job chamado "build-and-deploy"
   build-and-deploy:
-    # O tipo de runner em que o job será executado
+    needs: [ sonar ]
     runs-on: ubuntu-latest
-    # Steps representam a sequencia de tarefas usando o shell runners que serão executadas no como parte do Job
     steps:
       - uses: actions/checkout@v1
       - name: set up JDK 1.8
