@@ -40,8 +40,14 @@ jobs:
       - name: Run gradle tests
         run: ./gradlew test
 
+      # Run jacoco
       - name: Run Test Coverage
         run: ./gradlew jacocoTestReport
+
+      # Run report test
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }} # IMPORTANT: run Android Test Report regardless
 
   sonar:
     needs: [ build ]
