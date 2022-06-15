@@ -48,23 +48,6 @@ jobs:
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
-
-
-  jacoco:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Set up the Java JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Run Tests
-        run: ./gradlew test
-
       - name: Run Test Coverage
         run: ./gradlew jacocoTestReport
 
