@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,27 +58,24 @@ class PostViewModel @Inject constructor(
         val flowPost = getPostByUserIdUC.invoke(userId)
 
         flowUser.zip(flowPost) { resultUser, resultPots ->
-            resultUser.onFailure {
-                Timber.tag(this::class.simpleName).e(it)
-                _viewState.postValue(PostState.Error)
-            }
-
-            resultPots.onFailure {
-                Timber.tag(this::class.simpleName).e(it)
-                _viewState.postValue(PostState.Error)
-            }
-
             val user = resultUser.getOrNull()
             val posts = resultPots.getOrNull()
             if (user != null && posts != null) {
-                UserPostResult(user = user, posts = posts)
+                Result.success(
+                    UserPostResult(user = user, posts = posts)
+                )
             } else {
-                null
+                Result.failure(Throwable())
             }
         }.map { result ->
-            result?.let {
-                _viewState.postValue(PostState.Success(it))
-            }
+            result.fold(
+                onSuccess = {
+                    _viewState.postValue(PostState.Success(it))
+                },
+                onFailure = {
+                    _viewState.postValue(PostState.Error)
+                }
+            )
         }.onStart {
             _viewState.postValue(PostState.Loader)
         }.flowOn(coroutineDispatcher).launchIn(viewModelScope)
