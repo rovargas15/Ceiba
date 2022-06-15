@@ -1,4 +1,4 @@
-name: Build lint checker report, unit tests and static code analysis
+name: pipeline
 on:
   push:
     branches:
@@ -28,7 +28,6 @@ jobs:
           path: app/build/reports/lint-results-debug.html
 
   test:
-    needs: [ lint ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,8 +39,8 @@ jobs:
         with:
           name: test-report
           path: app/build/reports/tests/testDebugUnitTest/
+
   code_analysis:
-    needs: [ test ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
