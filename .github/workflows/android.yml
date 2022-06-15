@@ -40,6 +40,10 @@ jobs:
       - name: Run gradle tests
         run: ./gradlew test
 
+      # Run jacoco
+      - name: Run Test Coverage
+        run: ./gradlew jacocoTestReport
+
   sonar:
     needs: [ build ]
     name: SonarCloud
@@ -69,10 +73,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # Run jacoco
-      - name: Run Test Coverage
-        run: ./gradlew jacocoTestReport
-
-       # Run sonarqube
+      # Run sonarqube
       - name: Run Test Coverage
         run: ./gradlew build sonarqube --info
