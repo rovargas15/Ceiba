@@ -1,31 +1,13 @@
-name: Build lint checker report, unit tests and static code analysis
-
+name: pipeline
 on:
   push:
     branches:
       - master
   pull_request:
     types: [ opened, synchronize, reopened ]
-
 jobs:
-  test:
-    needs: [ lint ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Run Unit Tests
-        run: ./gradlew test
-
-      - name: Upload Unit Test Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-report
-          path: app/build/reports/tests/testDebugUnitTest/
-
-  code_analysis:
-    needs: [ test ]
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -52,3 +34,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonarqube --info
+
+  test:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run Unit Tests
+        run: ./gradlew test
+
+      - name: Upload Unit Test Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: app/build/reports/tests/testDebugUnitTest/
