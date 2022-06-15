@@ -49,7 +49,7 @@ jobs:
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
   jacoco:
-    needs: [code_analysis]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
