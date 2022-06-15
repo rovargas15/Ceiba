@@ -41,7 +41,7 @@ jobs:
         run: ./gradlew test
 
       - name: Run Test Coverage
-        run: ./gradlew jacocoTestReport sonarqube
+        run: ./gradlew jacocoTestReport
 
   sonar:
     needs: [ build ]
