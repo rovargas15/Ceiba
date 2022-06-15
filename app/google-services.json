@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "221652506447",
+    "project_id": "ceiba-d1835",
+    "storage_bucket": "ceiba-d1835.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221652506447:android:be9d63125a4d4a66fe973a",
+        "android_client_info": {
+          "package_name": "com.test.ceiba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221652506447-39k1k7rlfcs4a1ccoiq4b38mqmq64org.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.test.ceiba",
+            "certificate_hash": "5cced1d2fd34bdef7352b8cc79c205e3f850b86c"
+          }
+        },
+        {
+          "client_id": "221652506447-gmd8l9berqlhrghhmr52ukm030h63h7h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4IGLvHMLcsXGCLarJxBF5YJPtmDFG318"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221652506447-gmd8l9berqlhrghhmr52ukm030h63h7h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
