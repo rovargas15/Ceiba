@@ -46,87 +46,66 @@ jobs:
       - name: Build gradle project
         run: ./gradlew build
 
-      # Create APK Debug
-      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
-        run: ./gradlew assembleDebug
-
-      # Create APK Release
-      - name: Build apk release project (APK) - ${{ env.main_project_module }} module
-        run: ./gradlew assemble
-
       # Create Bundle AAB Release
       # Noted for main module build [main_project_module]:bundleRelease
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
-  code_analysis:
-
-    needs: [ build ]
-
+  sonar:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Upload Code Anaylysis To SonarCloud
-      steps:
-        - uses: actions/checkout@v2
-          with:
-            fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-        - name: Set up JDK 11
-          uses: actions/setup-java@v1
-          with:
-            java-version: 11
-        - name: Cache SonarCloud packages
-          uses: actions/cache@v1
-          with:
-            path: ~/.sonar/cache
-            key: ${{ runner.os }}-sonar
-            restore-keys: ${{ runner.os }}-sonar
-        - name: Cache Gradle packages
-          uses: actions/cache@v1
-          with:
-            path: ~/.gradle/caches
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-            restore-keys: ${{ runner.os }}-gradle
-        - name: Build and analyze
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          run: ./gradlew build sonarqube --info
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonarqube --info
 
-  jacoco_report:
-
-    needs: [ code_analysis ]
+  jacoco:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-        - name: Set up JDK 11
-           uses: actions/setup-java@v1
-            with:
-              java-version: 11
-
-            - name: Grant execute permission for gradlew
-              run: chmod +x gradlew
-
-            - name: Run Module Coverage
-              run: ./gradlew prodNormalDebugCoverage debugCoverage
-
-            - name: Jacoco Report to PR
-              id: jacoco
-              uses: madrapps/jacoco-report@v1.2
-              with:
-                paths: |
-                  ${{ github.workspace }}/app/build/reports/jacoco/prodNormalDebugCoverage/prodNormalDebugCoverage.xml,
-                  ${{ github.workspace }}/math/build/reports/jacoco/debugCoverage/debugCoverage.xml,
-                  ${{ github.workspace }}/text/build/reports/jacoco/debugCoverage/debugCoverage.xml
-                token: ${{ secrets.GITHUB_TOKEN }}
-                min-coverage-overall: 40
-                min-coverage-changed-files: 60
-                title: Code Coverage
-                debug-mode: false
-
-            - name: Get the Coverage info
-              run: |
-                echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
-                echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
-
+      - uses: actions/checkout@v2
+      - name: "Set up JDK 11"
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: "Grant execute permission for gradlew"
+        run: "chmod +x gradlew"
+      - name: "Run Module Coverage"
+        run: "./gradlew prodNormalDebugCoverage debugCoverage"
+      - id: jacoco
+        name: "Jacoco Report to PR"
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          debug-mode: false
+          min-coverage-changed-files: 60
+          min-coverage-overall: 40
+          paths: |
+            ${{ github.workspace }}/app/build/reports/jacoco/prodNormalDebugCoverage/prodNormalDebugCoverage.xml,
+            ${{ github.workspace }}/math/build/reports/jacoco/debugCoverage/debugCoverage.xml,
+            ${{ github.workspace }}/text/build/reports/jacoco/debugCoverage/debugCoverage.xml
+          title: "Code Coverage"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: "Get the Coverage info"
+        run: |-
+          echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
+          echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
