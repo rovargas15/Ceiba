@@ -1,17 +1,48 @@
 name: Android CI
-
 env:
   # The name of the main module repository
   main_project_module: app
-
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
 jobs:
-
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      # Set Current Date As Env Variable
+      - name: Set current date as env variable
+        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      # Set Repository Name As Env Variable
+      - name: Set repository name as env variable
+        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+      - name: Set Up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+      # Run Tests Build
+      - name: Run gradle tests
+        run: ./gradlew test
+        with:
+          name: test-report
+          path: app/build/reports/tests/testDebugUnitTest/
+      # Run Build Project
+      - name: Build gradle project
+        run: ./gradlew build
+      # Create APK Debug
+      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
+        run: ./gradlew assembleDebug
+      # Create APK Release
+      - name: Build apk release project (APK) - ${{ env.main_project_module }} module
+        run: ./gradlew assemble
+      # Create Bundle AAB Release
+      # Noted for main module build [main_project_module]:bundleRelease
+      - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
+        run: ./gradlew ${{ env.main_project_module }}:bundleRelease
   sonar:
     name: Build
     runs-on: ubuntu-latest
@@ -39,7 +70,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
 
   jacoco:
     runs-on: ubuntu-latest
@@ -52,7 +82,7 @@ jobs:
       - name: "Grant execute permission for gradlew"
         run: "chmod +x gradlew"
       - name: "Run Module Coverage"
-        run: "./gradlew prodNormalDebugCoverage debugCoverage"
+        run: "./gradlew debugCoverage"
       - id: jacoco
         name: "Jacoco Report to PR"
         uses: madrapps/jacoco-report@v1.2
@@ -61,7 +91,6 @@ jobs:
           min-coverage-changed-files: 60
           min-coverage-overall: 40
           paths: |
-            ${{ github.workspace }}/app/build/reports/jacoco/prodNormalDebugCoverage/prodNormalDebugCoverage.xml,
             ${{ github.workspace }}/math/build/reports/jacoco/debugCoverage/debugCoverage.xml,
             ${{ github.workspace }}/text/build/reports/jacoco/debugCoverage/debugCoverage.xml
           title: "Code Coverage"
