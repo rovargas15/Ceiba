@@ -41,9 +41,7 @@ jobs:
 
     steps:
       - name: Run Unit Tests
-        run: |
-          chmod +x gradlew
-        ./gradlew test
+        run:  ./gradlew test
 
       - name: Upload Unit Test Report
         uses: actions/upload-artifact@v2
@@ -56,9 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload Code Anaylysis To SonarCloud
-      run: |
-        chmod +x gradlew
-        ./gradlew build sonarqube --info
+      run: ./gradlew build sonarqube --info
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
