@@ -5,7 +5,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id "org.sonarqube" version "3.4.0.2513"
-
+    id "com.hiya.jacoco-android"
 }
 
 sonarqube {
@@ -145,4 +145,34 @@ dependencies {
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.38.1'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.38.1'
     androidTestUtil "androidx.test:orchestrator:1.4.1"
+}
+
+ktlint {
+    version = "0.41.0"
+    android = true
+    outputToConsole.set(true)
+    outputColorName.set("RED")
+    ignoreFailures.set(true)
+    enableExperimentalRules.set(true)
+    debug.set(true)
+    reporters {
+        reporter "plain"
+        reporter "checkstyle"
+    }
+}
+
+jacocoAndroidUnitTestReport {
+    excludes += [
+            '**/*Dao_Impl.*',
+            '**/*Binding.*',
+            '**/*BindingImpl.*',
+            '**/*HiltComponents.*',
+            '**/com/test/ceiba/ui/di/*',
+            '**/*Hilt*.*',
+            '**/dagger/*',
+            '**/hilt_aggregated_deps/*',
+    ]
+    csv.enabled true
+    html.enabled false
+    xml.enabled false
 }

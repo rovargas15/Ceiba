@@ -8,13 +8,17 @@ buildscript {
         jetpackHiltVersion = "1.0.0"
         hiltComposeNavVersion = "1.0.0"
     }
-}
 
+    dependencies {
+        classpath "com.hiya:jacoco-android:0.2"
+    }
+}
 plugins {
     id 'com.android.application' version '7.2.1' apply false
     id 'com.android.library' version '7.2.1' apply false
     id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
     id 'com.google.dagger.hilt.android' version '2.42' apply false
+    id "org.jlleitschuh.gradle.ktlint" version "10.0.0"
 }
 
 task clean(type: Delete) {
