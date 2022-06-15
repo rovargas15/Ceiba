@@ -98,12 +98,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: build release
-        run: ./gradlew assembleRelease
-      - name: upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+      - name: Firebase GitHub Action
+        uses: jonahsnider/firebase-action@1.0.7
+        env:
+          PROJECT_ID: "google-cloud-or-firebase-project-id"
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         with:
-          appId: ${{secrets.FIREBASE_APP_ID}}
-          token: ${{secrets.FIREBASE_TOKEN}}
-          groups: testers
-          file: app/build/outputs/apk/release/app-release-unsigned.apk
+          args: deploy
