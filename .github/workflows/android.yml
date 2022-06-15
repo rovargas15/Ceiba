@@ -74,4 +74,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       # Run sonarqube
+      - name: Run Test Coverage
         run: ./gradlew build sonarqube --info
