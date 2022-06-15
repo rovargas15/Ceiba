@@ -40,10 +40,9 @@ jobs:
       - name: Run gradle tests
         run: ./gradlew test
 
-      # Run jacoco Build
       - name: Run Test Coverage
-      run: ./gradlew jacocoTestReport sonarqube
-      
+        run: ./gradlew jacocoTestReport
+
   sonar:
     needs: [ build ]
     name: SonarCloud
