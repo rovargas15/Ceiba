@@ -94,7 +94,7 @@ jobs:
 #        run: ./gradlew build sonarqube --info
 
   build-and-deploy:
-    needs: [ sonar ]
+   # needs: [ sonar ]
     runs-on: ubuntu-latest
 
     steps:
