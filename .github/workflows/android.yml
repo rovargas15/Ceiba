@@ -42,6 +42,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v1
+      - name: Run jaCoco
+        run: ./gradlew jacocoTestReport
+
       - uses: 5monkeys/cobertura-action@master
         with:
           path: app/build/jacoco/jacoco.xml
