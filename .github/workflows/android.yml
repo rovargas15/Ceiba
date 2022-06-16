@@ -54,8 +54,21 @@ jobs:
         run: ./gradlew lint
 
       # Run Report ktlint
-      - name: Run Report Lint
-        run: ./gradlew lint
+      - name: Run Report ktlint
+        run: ./gradlew ktlintcheck
+
+
+  ui-test:
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew connectedCheck
 
   sonar:
     needs: [ build ]
@@ -99,21 +112,8 @@ jobs:
         with:
           java-version: 11
 
-      - name: Sign app APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-      - uses: actions/upload-artifact@v2
-
-      with:
-        name: Signed app bundle
-        path: ${{steps.sign_app.outputs.signedReleaseFile}}
+      - name: Generate bundle
+        run: ./gradlew app:bundleRelease
 
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -121,5 +121,5 @@ jobs:
           appId: ${{secrets.FIREBASE_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: testers
-          file: app/build/outputs/apk/release/app-release-unsigned.apk
+          file: app/build/outputs/apk/bundle/app-release.aab
           args: deploy
