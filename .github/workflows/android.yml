@@ -41,12 +41,6 @@ jobs:
       - name: Run Jacoco covergae
         run: ./gradlew jacocoTestReport --stacktrace
 
-      - name: Run espresso tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          script: ./gradlew connectedCheck
-
       # The test results are shown as a webpage instead of on the command line
       - name: Upload Reports
         if: always() # show reports even if the previous steps fail
