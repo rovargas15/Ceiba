@@ -38,18 +38,17 @@ jobs:
       - name: Run gradle tests
         run: ./gradlew testDebug --stacktrace
 
-      - name: set up JDK 11
-        run: echo Run espresso tests
-
       - name: Run espresso tests
-        run: echo Run espresso tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew connectedCheck
 
       # The test results are shown as a webpage instead of on the command line
       - name: Upload Reports
         if: always() # show reports even if the previous steps fail
         uses: actions/upload-artifact@v3
         with:
-          # Ideally this should indicate whether this is View or Compose, but the job index is the next best thing
           name: reports-${{ matrix.api-level }}-${{ strategy.job-index }}
           path: ${{ matrix.dir }}/app/build/reports
 
@@ -98,7 +97,7 @@ jobs:
 
       # Generating aab
       - name: Build Release AAB
-        run: ./gradlew bundleRelease
+        run: . /gradlew assembleRelease
 
       - name: Sign AAB
         uses: r0adkll/sign-android-release@v1
@@ -115,5 +114,5 @@ jobs:
           appId: ${{secrets.FIREBASE_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: testers
-          file: app/build/outputs/bundle/release/app-release.aab
+          file: app/build/outputs/apk/release/app-release-unsigned.apk
           args: deploy
