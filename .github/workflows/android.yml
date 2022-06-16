@@ -1,55 +1,59 @@
-name: Android CI
-
-env:
-  # The name of the main module repository
-  main_project_module: app
+name: Coverage Reporting
 
 on:
   push:
     branches:
       - master
+      - develop
+
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    branches:
+      - '**'
 
 jobs:
 
-  staticAnalysis:
-
-    runs-on: ubuntu-18.04
-
+  coverageReport:
+    strategy:
+      matrix:
+        api-level: [21,30]
+      fail-fast: false
+    runs-on: macos-10.15
     steps:
-      - uses: actions/checkout@v1
+      - name: checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
-      - name: Static Analysis
-        run: ./gradlew ktlintCheck detekt app:lintDebug custom:lintCustomexampleDebug
-
-      - name: Upload Static Analysis Report
-        uses: actions/upload-artifact@v2.2.0
-        if: ${{ always() }}
+      - name: create instrumentation coverage
+        uses: ReactiveCircus/android-emulator-runner@v2.23.0
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.internal.http.connectionTimeout=60000 -Dorg.gradle.internal.http.socketTimeout=60000 -Dorg.gradle.internal.network.retry.max.attempts=6 -Dorg.gradle.internal.network.retry.initial.backOff=2000"
         with:
-          name: Static Analysis Report
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          ndk: 21.4.7075529
+          script: bash contrib/instrumentation.sh
+
+
+      - name: Upload screenshot result
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: ${{ matrix.api-level }}
+          path: screencap.png
+
+      - name: create unit coverage
+        if: ${{ matrix.api-level==21  }}
+        run: ./gradlew jacocoTestDebugUnitTestReport jacocoTestCustomExampleDebugUnitTestReport
+
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.api-level==21  }}
+        run: |
+          bash <(curl -s https://codecov.io/bash)
+      - name: Upload Coverage to GH-Actions
+        uses: actions/upload-artifact@v2.2.0
+        if: ${{ matrix.api-level==21  }}
+        with:
+          name: Tests Coverage Report
           path: |
             **/reports/
-  build2:
-
-    runs-on: ubuntu-18.04
-
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-
-      - name: Install NDK
-        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;22.0.7026061" --sdk_root=${ANDROID_SDK_ROOT}
-
-      - name: Build all configurations
-        run: ./gradlew assemble
-
-      - name: Upload APK as Artifacts
-        uses: actions/upload-artifact@v2.2.0
-        with:
-          name: kiwix-android
-          path: |
-            **/*.apk
