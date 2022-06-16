@@ -45,17 +45,18 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          arch: x86
-          disable-animations: true
-          script: ./gradlew connectedCheck --stacktrace
-          working-directory: ${{ env.SAMPLE_PATH }}
+          arch: x86_64
+          working-directory: ${{ matrix.dir }}
+          script: ./gradlew connectedCheck
 
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v2
+      # The test results are shown as a webpage instead of on the command line
+      - name: Upload Reports
+        if: always() # show reports even if the previous steps fail
+        uses: actions/upload-artifact@v3
         with:
-          name: test-reports
-          path: ${{ env.SAMPLE_PATH }}/app/build/reports
+          # Ideally this should indicate whether this is View or Compose, but the job index is the next best thing
+          name: reports-${{ matrix.api-level }}-${{ strategy.job-index }}
+          path: ${{ matrix.dir }}/app/build/reports
 
 
   sonar:
@@ -100,14 +101,24 @@ jobs:
         with:
           java-version: 11
 
-      - name: Generate bundle
+      # Generating aab
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
 
-        run: ./gradlew app:bundleDebug
+      - name: Sign AAB
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.keystore }}
+          alias: ${{ secrets.key_alias }}
+          keyStorePassword: ${{ secrets.keystore_password }}
+          keyPassword: ${{ secrets.key_password }}
+
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: testers
-          file: app/build/outputs/bundle/debug/app-debug.aab
+          file: app/build/outputs/bundle/release/app-release.aab
           args: deploy
