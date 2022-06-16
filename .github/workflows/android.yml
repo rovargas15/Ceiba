@@ -38,6 +38,9 @@ jobs:
       - name: Run gradle tests
         run: ./gradlew testDebug --stacktrace
 
+      - name: Run Jacoco covergae
+        run: ./gradlew jacocoTestReport --stacktrace
+
       - name: Run espresso tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
