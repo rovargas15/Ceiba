@@ -37,20 +37,20 @@ jobs:
 #      - name: Run gradle tests
 #        run: ./gradlew testDebug --stacktrace
 
-  coverage:
-
+  collect_coverage:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v1
-      - name: Run jaCoco
-        run: ./gradlew jacocoTestReport
-
-      - uses: 5monkeys/cobertura-action@master
+      - uses: actions/checkout@v2
+      - uses: stevenleadbeater/kotlin-kover-action@v1.0.0
+        id: kover-tests
         with:
-          path: app/build/jacoco/jacoco.xml
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          minimum_coverage: 75
+          coverage-threshold: 80
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          proxy-url: https://add-pr-comment-proxy-94idvmwyie-uc.a.run.app
+      - name: Check coverage
+        if: ${{(steps.kover-tests.outputs.line-coverage) < 80}}
+        shell: bash
+        run: exit "Line coverage expected to be > 80 but was ${{steps.kover-tests.outputs.line-coverage}}"
 
 #
 #  sonar:
