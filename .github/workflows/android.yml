@@ -98,8 +98,8 @@ jobs:
         with:
           java-version: 11
 
-      - uses: r0adkll/sign-android-release@v1
       - name: Sign app APK
+        uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
@@ -115,3 +115,4 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: testers
           file: app/release/app-release.aab
+          args: deploy
